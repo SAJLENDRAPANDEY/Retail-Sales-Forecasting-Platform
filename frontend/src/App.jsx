@@ -7,6 +7,10 @@ import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
 import Forecast from "./pages/Forecast";
 import Login from "./pages/Login";
+import UploadData from "./pages/UploadData";
+
+import UploadedAnalysis from "./pages/UploadedAnalysis";
+
 
 function App() {
   return (
@@ -36,6 +40,15 @@ function App() {
             <Route
               path="/login"
               element={<Login />}
+            />
+            <Route
+              path="/uploaded-analysis"
+              element={<UploadedAnalysis />}
+            />
+
+            <Route
+              path="/upload"
+              element={<UploadData />}
             />
           </Routes>
         </div>

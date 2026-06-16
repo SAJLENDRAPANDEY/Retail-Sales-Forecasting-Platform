@@ -9,6 +9,7 @@ from backend.routes.category_chart import router as category_router
 from backend.routes.region_chart import router as region_router
 from backend.routes.auth import router as auth_router
 from backend.routes.reports import router as reports_router
+from backend.routes.upload import router as upload_router
 
 
 
@@ -33,6 +34,7 @@ app.include_router(category_router)
 app.include_router(region_router)
 app.include_router(auth_router)
 app.include_router(reports_router)
+app.include_router(upload_router)
 
 @app.get("/")
 def home():
