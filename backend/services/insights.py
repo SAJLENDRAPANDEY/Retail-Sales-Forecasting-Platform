@@ -7,8 +7,9 @@ def get_dashboard_data():
 
     if latest_analysis is None:
         return {
-            "success": False,
-            "error": "No analysis available"
+            "total_sales": 0,
+            "total_orders": 0,
+            "total_products": 0
         }
 
     return {
@@ -18,11 +19,10 @@ def get_dashboard_data():
         "total_orders": latest_analysis.get(
             "total_orders", 0
         ),
-        "total_rows": latest_analysis.get(
+        "total_products": latest_analysis.get(
             "total_rows", 0
         )
     }
-
 
 def get_analytics_data():
 
@@ -30,9 +30,11 @@ def get_analytics_data():
 
     if latest_analysis is None:
         return {
-            "success": False,
-            "error": "No analysis available"
+            "best_product": "N/A",
+            "top_region": "N/A",
+            "top_category": "N/A"
         }
+        
 
     return {
 
