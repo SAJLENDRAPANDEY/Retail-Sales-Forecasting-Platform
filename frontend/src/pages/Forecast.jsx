@@ -1,120 +1,314 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import API from "../api/api";
 
 function Forecast() {
-  const [formData, setFormData] = useState({
-    category: "",
-    region: "",
-    quantity: "",
-    month: ""
-  });
+  const [trendData, setTrendData] = useState([]);
+  const [availableYears, setAvailableYears] = useState([]);
 
-  const [prediction, setPrediction] = useState(null);
+  const [year, setYear] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const [loading, setLoading] = useState(true);
 
-    setFormData({
-      ...formData,
-      [name]:
-        name === "quantity" || name === "month"
-          ? Number(value)
-          : value
-    });
-  };
+  const [totalSales, setTotalSales] = useState(0);
+  const [avgSales, setAvgSales] = useState(0);
+  const [bestMonth, setBestMonth] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    fetchTrendData();
+    fetchYears();
+  }, []);
 
+  const fetchTrendData = async () => {
     try {
-      const response = await API.post(
-        "/predict",
-        formData
+      const response = await API.get(
+        "/sales-trend"
       );
 
-      setPrediction(
-        response.data.predicted_sales
-      );
+      const data = response.data;
+
+      setTrendData(data);
+
+      if (data.length > 0) {
+        const total = data.reduce(
+          (sum, item) =>
+            sum + item.sales,
+          0
+        );
+
+        setTotalSales(total);
+
+        setAvgSales(
+          total / data.length
+        );
+
+        const highest =
+          data.reduce(
+            (max, item) =>
+              item.sales >
+              max.sales
+                ? item
+                : max,
+            data[0]
+          );
+
+        setBestMonth(
+          highest.date
+        );
+      }
     } catch (error) {
-      console.error(error);
-      alert("Prediction Failed");
+      console.error(
+        "Forecast Error:",
+        error
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
+  const fetchYears = async () => {
+    try {
+      const response =
+        await API.get(
+          "/forecast-years"
+        );
+
+      setAvailableYears(
+        response.data.years || []
+      );
+    } catch (error) {
+      console.error(
+        "Year Fetch Error:",
+        error
+      );
+    }
+  };
+
+  const filteredData = year
+    ? trendData.filter(
+        (item) =>
+          item.date.startsWith(
+            year
+          )
+      )
+    : trendData;
+
+  if (loading) {
+    return (
+      <h2>
+        Loading Forecast Data...
+      </h2>
+    );
+  }
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Sales Forecast</h1>
+    <div
+      style={{
+        padding: "20px",
+      }}
+    >
+      <h1>
+        Sales Forecast Dashboard
+      </h1>
 
-      <form onSubmit={handleSubmit}>
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <option value="">Select Category</option>
-          <option value="Technology">
-            Technology
-          </option>
-          <option value="Furniture">
-            Furniture
-          </option>
-          <option value="Office Supplies">
-            Office Supplies
-          </option>
-        </select>
+      <p>
+        Monthly Sales Analysis
+      </p>
 
-        <br />
-        <br />
+      {/* KPI Cards */}
 
-        <select
-          name="region"
-          value={formData.region}
-          onChange={handleChange}
-        >
-          <option value="">Select Region</option>
-          <option value="West">West</option>
-          <option value="East">East</option>
-          <option value="Central">Central</option>
-          <option value="South">South</option>
-        </select>
-
-        <br />
-        <br />
-
-        <input
-          type="number"
-          name="quantity"
-          placeholder="Quantity"
-          value={formData.quantity}
-          onChange={handleChange}
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          flexWrap: "wrap",
+          marginTop: "25px",
+          marginBottom: "30px",
+        }}
+      >
+        <Card
+          title="Total Sales"
+          value={
+            "Rs. " +
+            totalSales.toLocaleString()
+          }
         />
 
-        <br />
-        <br />
-
-        <input
-          type="number"
-          name="month"
-          placeholder="Month (1-12)"
-          min="1"
-          max="12"
-          value={formData.month}
-          onChange={handleChange}
+        <Card
+          title="Average Monthly Sales"
+          value={
+            "Rs. " +
+            avgSales.toFixed(2)
+          }
         />
 
+        <Card
+          title="Best Sales Month"
+          value={bestMonth}
+        />
+
+        <Card
+          title="Months Available"
+          value={
+            trendData.length
+          }
+        />
+      </div>
+
+      {/* Year Filter */}
+
+      <div
+        style={{
+          marginBottom: "20px",
+        }}
+      >
+        <label>
+          Select Year:
+        </label>
+
         <br />
         <br />
 
-        <button type="submit">
-          Predict Sales
-        </button>
-      </form>
+        <select
+          value={year}
+          onChange={(e) =>
+            setYear(
+              e.target.value
+            )
+          }
+          style={{
+            padding: "10px",
+            minWidth: "200px",
+          }}
+        >
+          <option value="">
+            All Years
+          </option>
 
-      {prediction !== null && (
+          {availableYears.map(
+            (yr) => (
+              <option
+                key={yr}
+                value={yr}
+              >
+                {yr}
+              </option>
+            )
+          )}
+        </select>
+      </div>
+
+      {/* Sales History */}
+
+      <div
+        style={{
+          background: "#fff",
+          padding: "20px",
+          borderRadius: "10px",
+          boxShadow:
+            "0 2px 8px rgba(0,0,0,0.1)",
+        }}
+      >
         <h2>
-          Predicted Sales: ₹ {prediction}
+          Monthly Sales History
         </h2>
-      )}
+
+        <table
+          border="1"
+          cellPadding="10"
+          style={{
+            width: "100%",
+            borderCollapse:
+              "collapse",
+            marginTop: "15px",
+          }}
+        >
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Sales</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredData.map(
+              (
+                item,
+                index
+              ) => (
+                <tr key={index}>
+                  <td>
+                    {item.date}
+                  </td>
+
+                  <td>
+                    Rs.{" "}
+                    {Number(
+                      item.sales
+                    ).toLocaleString()}
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Future Forecast */}
+
+      <div
+        style={{
+          marginTop: "30px",
+          padding: "20px",
+          background: "#f8fafc",
+          borderRadius: "10px",
+        }}
+      >
+        <h2>
+          Future Forecast
+        </h2>
+
+        <p>
+          Model Integration Pending
+        </p>
+
+        <p>
+          Next Step:
+          Add Month + Year
+          prediction using
+          model.pkl and ARIMA.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Card({
+  title,
+  value,
+}) {
+  return (
+    <div
+      style={{
+        minWidth: "220px",
+        flex: 1,
+        padding: "20px",
+        borderRadius: "10px",
+        background: "#ffffff",
+        border:
+          "1px solid #ddd",
+      }}
+    >
+      <h3>{title}</h3>
+
+      <p
+        style={{
+          fontSize: "22px",
+          fontWeight: "bold",
+          color: "#2563eb",
+        }}
+      >
+        {value}
+      </p>
     </div>
   );
 }

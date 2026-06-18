@@ -4,6 +4,10 @@ from fastapi import (
     File
 )
 
+from backend.database.history_db import (
+    save_upload_history
+)
+
 from fastapi.responses import (
     FileResponse
 )
@@ -24,14 +28,9 @@ from backend.services.upload_report_service import (
 
 router = APIRouter()
 
-# Global storage
 uploaded_df = None
 latest_analysis = None
 
-
-# =========================
-# Upload Excel
-# =========================
 
 @router.post("/upload")
 async def upload_file(
@@ -47,6 +46,13 @@ async def upload_file(
             engine="openpyxl"
         )
 
+        # Save history
+        save_upload_history(
+            file.filename,
+            len(uploaded_df),
+            len(uploaded_df.columns)
+        )
+
         return {
 
             "success": True,
@@ -57,6 +63,12 @@ async def upload_file(
 
             "rows": len(
                 uploaded_df
+            ),
+
+            "preview": uploaded_df.head(10)
+            .fillna("")
+            .to_dict(
+                orient="records"
             )
 
         }
@@ -71,10 +83,6 @@ async def upload_file(
 
         }
 
-
-# =========================
-# Analyze Uploaded Data
-# =========================
 
 @router.post("/analyze")
 async def analyze(
@@ -107,6 +115,9 @@ async def analyze(
 
         )
 
+        print("ANALYSIS RESULT:")
+        print(result)
+
         latest_analysis = result
 
         return result
@@ -121,10 +132,6 @@ async def analyze(
 
         }
 
-
-# =========================
-# Download PDF Report
-# =========================
 
 @router.get(
     "/download-upload-report"

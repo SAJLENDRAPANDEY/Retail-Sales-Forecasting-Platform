@@ -11,7 +11,7 @@ const styles = `
     padding: 0;
   }
 
-  .login-root {
+  .register-root {
     min-height: 100vh;
     background-color: #F5F0E8;
     display: flex;
@@ -19,7 +19,7 @@ const styles = `
   }
 
   /* Left decorative panel */
-  .login-left {
+  .register-left {
     width: 42%;
     background-color: #2C2A25;
     display: flex;
@@ -30,7 +30,7 @@ const styles = `
     overflow: hidden;
   }
 
-  .login-left::before {
+  .register-left::before {
     content: '';
     position: absolute;
     top: -80px;
@@ -41,7 +41,7 @@ const styles = `
     border: 1px solid rgba(245, 240, 232, 0.08);
   }
 
-  .login-left::after {
+  .register-left::after {
     content: '';
     position: absolute;
     bottom: 60px;
@@ -79,27 +79,52 @@ const styles = `
     z-index: 1;
   }
 
+  .left-steps {
+    margin-bottom: 36px;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: #C8A96E;
+    margin-top: 2px;
+    min-width: 18px;
+  }
+
+  .step-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(245, 240, 232, 0.6);
+    line-height: 1.6;
+  }
+
+  .step-text strong {
+    display: block;
+    color: rgba(245, 240, 232, 0.9);
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+
   .left-heading {
     font-family: 'Playfair Display', serif;
-    font-size: 38px;
+    font-size: 36px;
     font-weight: 400;
     line-height: 1.25;
     color: #F5F0E8;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
   }
 
   .left-heading em {
     font-style: italic;
     color: #C8A96E;
-  }
-
-  .left-subtext {
-    font-family: 'Inter', sans-serif;
-    font-size: 13.5px;
-    font-weight: 300;
-    color: rgba(245, 240, 232, 0.55);
-    line-height: 1.7;
-    max-width: 280px;
   }
 
   .left-footer {
@@ -110,7 +135,7 @@ const styles = `
   }
 
   /* Right form panel */
-  .login-right {
+  .register-right {
     flex: 1;
     display: flex;
     align-items: center;
@@ -118,7 +143,7 @@ const styles = `
     padding: 48px 40px;
   }
 
-  .login-card {
+  .register-card {
     width: 100%;
     max-width: 400px;
   }
@@ -146,12 +171,12 @@ const styles = `
     font-size: 13.5px;
     font-weight: 300;
     color: #7A7468;
-    margin-bottom: 40px;
+    margin-bottom: 36px;
     line-height: 1.5;
   }
 
   .field-group {
-    margin-bottom: 22px;
+    margin-bottom: 20px;
   }
 
   .field-label {
@@ -189,25 +214,18 @@ const styles = `
     background-color: #E8E2D6;
   }
 
-  .forgot-link {
-    display: block;
-    text-align: right;
-    margin-top: 8px;
+  .field-hint {
+    margin-top: 6px;
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    color: #9A9288;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .forgot-link:hover {
-    color: #C8A96E;
+    font-size: 11.5px;
+    color: #AEA89E;
+    font-weight: 300;
   }
 
   .submit-btn {
     width: 100%;
     padding: 14px;
-    margin-top: 10px;
+    margin-top: 8px;
     background-color: #2C2A25;
     color: #F5F0E8;
     border: none;
@@ -233,6 +251,22 @@ const styles = `
     cursor: not-allowed;
   }
 
+  .terms-note {
+    margin-top: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: #AEA89E;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .terms-note a {
+    color: #7A7468;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   .divider {
     display: flex;
     align-items: center;
@@ -253,14 +287,14 @@ const styles = `
     letter-spacing: 0.06em;
   }
 
-  .register-prompt {
+  .login-prompt {
     text-align: center;
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     color: #7A7468;
   }
 
-  .register-prompt a {
+  .login-prompt a {
     color: #2C2A25;
     font-weight: 500;
     text-decoration: none;
@@ -269,59 +303,73 @@ const styles = `
     transition: color 0.2s;
   }
 
-  .register-prompt a:hover {
+  .login-prompt a:hover {
     color: #C8A96E;
   }
 
-  /* Error message */
   .error-msg {
     font-family: 'Inter', sans-serif;
     font-size: 12.5px;
     color: #B85C4A;
-    margin-top: 6px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
-  /* Responsive */
+  .success-msg {
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    color: #5A8A6A;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   @media (max-width: 720px) {
-    .login-left {
+    .register-left {
       display: none;
     }
-    .login-right {
+    .register-right {
       padding: 40px 24px;
     }
   }
 `;
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     setError("");
+    setSuccess("");
 
-    if (!email || !password) {
-      setError("Both fields are required to continue.");
+    if (!name || !email || !password) {
+      setError("All fields are required to create your account.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await API.post("/login", { email, password });
+      const response = await API.post("/register", { name, email, password });
 
       if (response.data.success) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userId", response.data.user_id);
-        localStorage.setItem("userName", response.data.name);
-        navigate("/dashboard");
+        setSuccess("Account created! Redirecting to sign in…");
+        setTimeout(() => navigate("/login"), 1500);
       } else {
-        setError(response.data.message || "Incorrect credentials. Please try again.");
+        setError(response.data.message || "Registration failed. Please try again.");
       }
     } catch (err) {
       console.log(err);
@@ -332,16 +380,16 @@ function Login() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleLogin();
+    if (e.key === "Enter") handleRegister();
   };
 
   return (
     <>
       <style>{styles}</style>
-      <div className="login-root">
+      <div className="register-root">
 
         {/* Left Panel */}
-        <div className="login-left">
+        <div className="register-left">
           <div className="brand-mark">
             <div className="brand-dot" />
             <span className="brand-name">YourBrand</span>
@@ -349,24 +397,66 @@ function Login() {
 
           <div className="left-content">
             <h2 className="left-heading">
-              A workspace built<br />for <em>serious</em> work.
+              Set up in<br /><em>under a minute.</em>
             </h2>
-            <p className="left-subtext">
-              Everything you need, nothing you don't. Sign in to pick up right where you left off.
-            </p>
+
+            <div className="left-steps">
+              <div className="step-item">
+                <span className="step-number">01</span>
+                <div className="step-text">
+                  <strong>Create your account</strong>
+                  Fill in your name, email, and a secure password.
+                </div>
+              </div>
+              <div className="step-item">
+                <span className="step-number">02</span>
+                <div className="step-text">
+                  <strong>Sign in instantly</strong>
+                  No email verification delays — access your dashboard right away.
+                </div>
+              </div>
+              <div className="step-item">
+                <span className="step-number">03</span>
+                <div className="step-text">
+                  <strong>Start where it matters</strong>
+                  Your workspace is ready the moment you land.
+                </div>
+              </div>
+            </div>
           </div>
 
           <p className="left-footer">© 2025 YourBrand. All rights reserved.</p>
         </div>
 
         {/* Right Form Panel */}
-        <div className="login-right">
-          <div className="login-card">
-            <p className="form-eyebrow">Welcome back</p>
-            <h1 className="form-title">Sign in</h1>
+        <div className="register-right">
+          <div className="register-card">
+            <p className="form-eyebrow">Get started</p>
+            <h1 className="form-title">Create account</h1>
             <p className="form-subtitle">
-              Enter your credentials to access your account.
+              Free to join. No card required.
             </p>
+
+            {error && (
+              <p className="error-msg"><span>⚠</span> {error}</p>
+            )}
+            {success && (
+              <p className="success-msg"><span>✓</span> {success}</p>
+            )}
+
+            <div className="field-group">
+              <label className="field-label" htmlFor="name">Full name</label>
+              <input
+                id="name"
+                className="field-input"
+                type="text"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoComplete="name"
+              />
+            </div>
 
             <div className="field-group">
               <label className="field-label" htmlFor="email">Email address</label>
@@ -388,28 +478,28 @@ function Login() {
                 id="password"
                 className="field-input"
                 type="password"
-                placeholder="Your password"
+                placeholder="At least 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
-              <a href="/forgot-password" className="forgot-link">Forgot password?</a>
+              <p className="field-hint">Use a mix of letters, numbers, and symbols.</p>
             </div>
-
-            {error && (
-              <p className="error-msg">
-                <span>⚠</span> {error}
-              </p>
-            )}
 
             <button
               className="submit-btn"
-              onClick={handleLogin}
+              onClick={handleRegister}
               disabled={loading}
             >
-              {loading ? "Signing in…" : "Sign in"}
+              {loading ? "Creating account…" : "Create account"}
             </button>
+
+            <p className="terms-note">
+              By registering, you agree to our{" "}
+              <a href="/terms">Terms of Service</a> and{" "}
+              <a href="/privacy">Privacy Policy</a>.
+            </p>
 
             <div className="divider">
               <div className="divider-line" />
@@ -417,8 +507,8 @@ function Login() {
               <div className="divider-line" />
             </div>
 
-            <p className="register-prompt">
-              New here? <Link to="/register">Create an account</Link>
+            <p className="login-prompt">
+              Already have an account? <Link to="/login">Sign in</Link>
             </p>
           </div>
         </div>
@@ -428,4 +518,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

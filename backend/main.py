@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.routes.forecast import router as forecast_router
+from backend.routes.forecast_routes import router as forecast_router
 from backend.routes.dashboard import router as dashboard_router
 from backend.routes.analytics import router as analytics_router
 from backend.routes.sales_trend import router as sales_trend_router
@@ -9,7 +9,8 @@ from backend.routes.category_chart import router as category_router
 from backend.routes.region_chart import router as region_router
 from backend.routes.auth import router as auth_router
 from backend.routes.reports import router as reports_router
-from backend.routes.upload import router as upload_router
+from backend.routes.upload_routes import router as upload_router
+from backend.routes.history import (router as history_router)
 
 
 
@@ -35,6 +36,7 @@ app.include_router(region_router)
 app.include_router(auth_router)
 app.include_router(reports_router)
 app.include_router(upload_router)
+app.include_router(history_router)
 
 @app.get("/")
 def home():
