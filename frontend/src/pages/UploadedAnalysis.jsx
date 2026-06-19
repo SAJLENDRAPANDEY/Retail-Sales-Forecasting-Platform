@@ -358,12 +358,52 @@ function UploadedAnalysis() {
     if (stored) setData(JSON.parse(stored));
   }, []);
 
-  const downloadPDF = () => {
-    window.open(
+  const downloadPDF = async () => {
+  try {
+
+    if (!data) {
+      alert("No analysis data found");
+      return;
+    }
+
+    const response = await fetch(
       "https://retail-sales-forecasting-platform.onrender.com/download-upload-report",
-      "_blank"
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
     );
-  };
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(errorText);
+      throw new Error("Failed to generate PDF");
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "uploaded_analysis.pdf";
+
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error("PDF Download Error:", error);
+    alert("Unable to download PDF report");
+  }
+};
 
   const clearAnalysis = () => {
     localStorage.removeItem("uploadedAnalysis");

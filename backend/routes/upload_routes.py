@@ -1,7 +1,10 @@
+
+
 from fastapi import (
     APIRouter,
     UploadFile,
-    File
+    File,
+    Body
 )
 
 from backend.database.history_db import (
@@ -133,39 +136,24 @@ async def analyze(
         }
 
 
-@router.get(
-    "/download-upload-report"
-)
-async def download_report():
-
-    global latest_analysis
-
-    if latest_analysis is None:
-
-        return {
-
-            "success": False,
-
-            "error":
-            "No analysis available"
-
-        }
+@router.post("/download-upload-report")
+async def download_report(
+    analysis: dict = Body(...)
+):
 
     try:
 
         file_path = generate_uploaded_report(
-            latest_analysis
+            analysis
         )
 
         return FileResponse(
 
             path=file_path,
 
-            filename=
-            "uploaded_analysis.pdf",
+            filename="uploaded_analysis.pdf",
 
-            media_type=
-            "application/pdf"
+            media_type="application/pdf"
 
         )
 
