@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import DynamicPieChart from "../components/DynamicPieChart";
 import DynamicBarChart from "../components/DynamicBarChart";
 
+const API_URL = import.meta.env.VITE_API_URL || "https://retail-sales-forecasting-platform.onrender.com";
+
 const CHART_COLORS = [
   "#C8A96E", "#2C2A25", "#8B7355", "#A0956A",
   "#4A4640", "#D4BC8A", "#6B5E4E",
@@ -73,6 +75,10 @@ const styles = `
     text-decoration: none;
   }
   .btn-primary:hover { background-color: #3D3A33; }
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
   .btn-danger {
     display: inline-flex;
@@ -231,6 +237,32 @@ const styles = `
     margin: 0 0 18px;
   }
 
+  /* ── AI Insights card ── */
+  .insights-card {
+    background-color: #FDFAF5;
+    border: 1px solid #E2DBCF;
+    border-radius: 10px;
+    padding: 24px;
+    margin-top: 0;
+  }
+  .insights-text {
+    font-size: 14px;
+    font-weight: 300;
+    color: #4A4640;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .insights-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #9A9288;
+    font-style: italic;
+  }
+
   /* ── Empty state ── */
   .empty-state {
     display: flex;
@@ -274,17 +306,19 @@ const styles = `
   }
   .empty-cta:hover { background-color: #3D3A33; }
 
-  /* ── Confirm modal overlay ── */
+  /* ── Confirm modal overlay (inline, not fixed) ── */
   .modal-overlay {
-    position: fixed;
+    position: absolute;
     inset: 0;
     background: rgba(44,42,37,0.45);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 99;
     padding: 20px;
+    border-radius: inherit;
   }
+  .ua-page { position: relative; }
   .modal-box {
     background: #FDFAF5;
     border: 1px solid #E2DBCF;
@@ -349,70 +383,113 @@ const styles = `
   }
 `;
 
-function UploadedAnalysis() {
-  const [data, setData]           = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
+/* ─────────────────────────────────────────────
+   KpiCard sub-component
+───────────────────────────────────────────── */
+function KpiCard({ label, value }) {
+  return (
+    <div className="kpi-card">
+      <p className="kpi-label">{label}</p>
+      <p className="kpi-value">{value}</p>
+    </div>
+  );
+}
 
+/* ─────────────────────────────────────────────
+   Main component
+───────────────────────────────────────────── */
+function UploadedAnalysis() {
+  const [data, setData]             = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [aiInsights, setAiInsights] = useState("");
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  /* Load analysis from localStorage on mount */
   useEffect(() => {
     const stored = localStorage.getItem("uploadedAnalysis");
-    if (stored) setData(JSON.parse(stored));
+    if (stored) {
+      try {
+        setData(JSON.parse(stored));
+      } catch {
+        console.error("Failed to parse stored analysis");
+      }
+    }
   }, []);
 
+  /* ── Download PDF ── */
   const downloadPDF = async () => {
-  try {
-
     if (!data) {
       alert("No analysis data found");
       return;
     }
-
-    const response = await fetch(
-      "https://retail-sales-forecasting-platform.onrender.com/download-upload-report",
-      {
+    setPdfLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/download-upload-report`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(errorText);
+        throw new Error("Failed to generate PDF");
       }
-    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(errorText);
-      throw new Error("Failed to generate PDF");
+      const blob = await response.blob();
+      const url  = window.URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href     = url;
+      a.download = "uploaded_analysis.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF Download Error:", error);
+      alert("Unable to download PDF report");
+    } finally {
+      setPdfLoading(false);
     }
+  };
 
-    const blob = await response.blob();
+  /* ── Generate AI insights ── */
+  const generateInsights = async () => {
+    if (!data) return;
+    setInsightsLoading(true);
+    setAiInsights("");
+    try {
+      const response = await fetch(`${API_URL}/generate-ai-insights`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const url = window.URL.createObjectURL(blob);
+      if (!response.ok) throw new Error("Failed to generate insights");
 
-    const a = document.createElement("a");
+      const result = await response.json();
+      setAiInsights(result.insights || "No insights returned.");
+    } catch (error) {
+      console.error("AI Insights Error:", error);
+      alert("Unable to generate AI insights");
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
 
-    a.href = url;
-    a.download = "uploaded_analysis.pdf";
-
-    document.body.appendChild(a);
-    a.click();
-
-    document.body.removeChild(a);
-
-    window.URL.revokeObjectURL(url);
-
-  } catch (error) {
-    console.error("PDF Download Error:", error);
-    alert("Unable to download PDF report");
-  }
-};
-
+  /* ── Clear analysis ── */
   const clearAnalysis = () => {
     localStorage.removeItem("uploadedAnalysis");
-    window.location.reload();
+    setData(null);
+    setAiInsights("");
+    setShowConfirm(false);
   };
 
   const categoryColumn =
     data?.selected_category || data?.selected_category_column || "—";
 
+  /* ────────────────────── RENDER ────────────────────── */
   return (
     <>
       <style>{styles}</style>
@@ -424,13 +501,30 @@ function UploadedAnalysis() {
             <span className="ua-eyebrow">Analysis Report</span>
             <h1 className="ua-title">Uploaded Dataset Analysis</h1>
           </div>
+
           {data && (
             <div className="ua-actions">
-              <button className="btn-primary" onClick={downloadPDF}>
-                ↓ &nbsp;Download PDF Report
+              <button
+                className="btn-primary"
+                onClick={downloadPDF}
+                disabled={pdfLoading}
+              >
+                ↓&nbsp;{pdfLoading ? "Generating..." : "Download PDF Report"}
               </button>
-              <button className="btn-danger" onClick={() => setShowConfirm(true)}>
-                ✕ &nbsp;Clear Analysis
+
+              <button
+                className="btn-primary"
+                onClick={generateInsights}
+                disabled={insightsLoading}
+              >
+                ✦&nbsp;{insightsLoading ? "Generating..." : "Generate AI Insights"}
+              </button>
+
+              <button
+                className="btn-danger"
+                onClick={() => setShowConfirm(true)}
+              >
+                ✕&nbsp;Clear Analysis
               </button>
             </div>
           )}
@@ -444,11 +538,12 @@ function UploadedAnalysis() {
             <p className="empty-sub">
               Upload an Excel dataset first. Once analyzed, your full report will appear here.
             </p>
-            <a href="/upload" className="empty-cta">↑ &nbsp;Upload a dataset</a>
+            <a href="/upload" className="empty-cta">↑&nbsp;Upload a dataset</a>
           </div>
+
         ) : (
           <>
-            {/* Category tag */}
+            {/* ── Category tag ── */}
             <div className="category-tag">
               <span className="category-tag-label">Category column</span>
               <span className="category-tag-value">{categoryColumn}</span>
@@ -473,7 +568,9 @@ function UploadedAnalysis() {
                 />
                 <KpiCard
                   label="Total Records"
-                  value={Number(data.total_records || data.total_orders || 0).toLocaleString()}
+                  value={Number(
+                    data.total_records || data.total_orders || 0
+                  ).toLocaleString()}
                 />
               </div>
             </section>
@@ -489,13 +586,39 @@ function UploadedAnalysis() {
                   <div className="chart-card">
                     <p className="chart-card-eyebrow">Distribution</p>
                     <p className="chart-card-title">Sales by Share</p>
-                    <DynamicPieChart data={data.category_chart} colors={CHART_COLORS} />
+                    <DynamicPieChart
+                      data={data.category_chart}
+                      colors={CHART_COLORS}
+                    />
                   </div>
                   <div className="chart-card">
                     <p className="chart-card-eyebrow">Comparison</p>
                     <p className="chart-card-title">Sales by Category</p>
-                    <DynamicBarChart data={data.category_chart} colors={CHART_COLORS} />
+                    <DynamicBarChart
+                      data={data.category_chart}
+                      colors={CHART_COLORS}
+                    />
                   </div>
+                </div>
+              </section>
+            )}
+
+            {/* ── AI Insights ── */}
+            {(aiInsights || insightsLoading) && (
+              <section className="ua-section">
+                <div className="section-header">
+                  <h2 className="section-title">AI Business Insights</h2>
+                </div>
+                <div className="section-divider" />
+                <div className="insights-card">
+                  {insightsLoading ? (
+                    <div className="insights-loading">
+                      <span>✦</span>
+                      <span>Generating insights from your data...</span>
+                    </div>
+                  ) : (
+                    <pre className="insights-text">{aiInsights}</pre>
+                  )}
                 </div>
               </section>
             )}
@@ -504,15 +627,25 @@ function UploadedAnalysis() {
 
         {/* ── Confirm clear modal ── */}
         {showConfirm && (
-          <div className="modal-overlay" onClick={() => setShowConfirm(false)}>
-            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-overlay"
+            onClick={() => setShowConfirm(false)}
+          >
+            <div
+              className="modal-box"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="modal-icon">🗑️</div>
               <h3 className="modal-title">Clear this analysis?</h3>
               <p className="modal-sub">
-                This will remove the current dataset analysis from your session. You'll need to re-upload to see results again.
+                This will remove the current dataset analysis from your session.
+                You'll need to re-upload to see results again.
               </p>
               <div className="modal-btns">
-                <button className="modal-cancel" onClick={() => setShowConfirm(false)}>
+                <button
+                  className="modal-cancel"
+                  onClick={() => setShowConfirm(false)}
+                >
                   Cancel
                 </button>
                 <button className="modal-confirm" onClick={clearAnalysis}>
@@ -525,15 +658,6 @@ function UploadedAnalysis() {
 
       </div>
     </>
-  );
-}
-
-function KpiCard({ label, value }) {
-  return (
-    <div className="kpi-card">
-      <p className="kpi-label">{label}</p>
-      <p className="kpi-value">{value}</p>
-    </div>
   );
 }
 

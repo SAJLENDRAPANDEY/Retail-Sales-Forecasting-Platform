@@ -21,3 +21,6 @@ requests
 httpx
 
 pytest
+
+groq
+python-dotenv

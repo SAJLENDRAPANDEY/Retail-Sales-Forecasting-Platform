@@ -11,6 +11,7 @@ from backend.routes.auth import router as auth_router
 from backend.routes.reports import router as reports_router
 from backend.routes.upload_routes import router as upload_router
 from backend.routes.history import (router as history_router)
+from backend.routes.ai_insights import (router as ai_router)
 
 
 
@@ -37,6 +38,7 @@ app.include_router(auth_router)
 app.include_router(reports_router)
 app.include_router(upload_router)
 app.include_router(history_router)
+app.include_router(ai_router)
 
 @app.get("/")
 def home():
