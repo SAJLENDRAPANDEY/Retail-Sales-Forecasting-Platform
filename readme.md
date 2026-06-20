@@ -9,14 +9,16 @@ Built with FastAPI, React, Machine Learning, and Groq AI — featuring automated
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://retails-sales-forecasting-platform.netlify.app/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SAJLENDRAPANDEY/Retail-Sales-Forecasting-Platform)
 
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
-![XGBoost](https://img.shields.io/badge/XGBoost-ML-EC6E00?style=flat-square)
-![Groq](https://img.shields.io/badge/Groq-Llama%203.3%2070B-F55036?style=flat-square)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+<p>
+<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+<img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+<img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React" />
+<img src="https://img.shields.io/badge/XGBoost-ML-EC6E00?style=flat-square" alt="XGBoost" />
+<img src="https://img.shields.io/badge/Groq-Llama%203.3%2070B-F55036?style=flat-square" alt="Groq" />
+<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
+<img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" alt="CI/CD" />
+<img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
+</p>
 
 </div>
 
@@ -24,7 +26,7 @@ Built with FastAPI, React, Machine Learning, and Groq AI — featuring automated
 
 ## 📌 Overview
 
-**Retail Sales Forecasting Platform** is a full-stack data analytics application that lets users upload retail sales datasets and instantly receive **automated data quality checks, interactive visualizations, AI-generated business insights, and machine learning–based sales forecasts.**
+**Retail Sales Forecasting Platform** is a full-stack data analytics application that lets users upload retail sales datasets and instantly receive automated data quality checks, interactive visualizations, AI-generated business insights, and machine learning–based sales forecasts.
 
 The platform combines a **FastAPI backend**, a **React + Vite frontend**, a **Pandas/XGBoost ML pipeline**, and the **Groq Llama 3.3 70B API** for natural-language business insights — all containerized with Docker and deployed through an automated CI/CD pipeline.
 
@@ -115,7 +117,9 @@ The platform combines a **FastAPI backend**, a **React + Vite frontend**, a **Pa
 
 High-level breakdown of the backend services, frontend structure, and supporting directories.
 
-![System Architecture](docs/architecture.png)
+<p align="center">
+  <img src="docs/architecture.png" alt="System Architecture" width="700" />
+</p>
 
 ---
 
@@ -123,7 +127,9 @@ High-level breakdown of the backend services, frontend structure, and supporting
 
 How a user moves through the app — from landing page, through authentication, to the dashboard and its five core features.
 
-![User Flow](docs/user-flow.png)
+<p align="center">
+  <img src="docs/user-flow.png" alt="User Flow" width="700" />
+</p>
 
 ---
 
@@ -131,7 +137,9 @@ How a user moves through the app — from landing page, through authentication, 
 
 How an uploaded dataset is transformed into a structured, AI-generated business report using Groq's Llama 3.3 70B model.
 
-![AI Insights Pipeline](docs/ai-insights.png)
+<p align="center">
+  <img src="docs/ai-insights.png" alt="AI Insights Pipeline" width="700" />
+</p>
 
 ---
 
@@ -139,7 +147,9 @@ How an uploaded dataset is transformed into a structured, AI-generated business 
 
 The dual pipeline that powers both the descriptive analytics engine and the ML-based forecasting engine.
 
-![Analytics & Forecasting](docs/analytics-forecasting.png)
+<p align="center">
+  <img src="docs/analytics-forecasting.png" alt="Analytics & Forecasting Pipeline" width="700" />
+</p>
 
 ---
 
@@ -147,17 +157,34 @@ The dual pipeline that powers both the descriptive analytics engine and the ML-b
 
 > Add your screenshots inside `docs/screenshots/` and reference them below.
 
-| Dashboard | Analytics |
-|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Analytics](docs/screenshots/analytics.png) |
-
-| Forecast | Upload History |
-|---|---|
-| ![Forecast](docs/screenshots/forecast.png) | ![Upload History](docs/screenshots/upload-history.png) |
-
-| AI Insights |
-|---|
-| ![AI Insights](docs/screenshots/ai-insights.png) |
+<table align="center">
+<tr>
+<td align="center" width="50%">
+<b>Dashboard</b><br/>
+<img src="docs/screenshots/dashboard.png" alt="Dashboard" width="380" />
+</td>
+<td align="center" width="50%">
+<b>Analytics</b><br/>
+<img src="docs/screenshots/analytics.png" alt="Analytics" width="380" />
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Forecast</b><br/>
+<img src="docs/screenshots/forecast.png" alt="Forecast" width="380" />
+</td>
+<td align="center" width="50%">
+<b>Upload History</b><br/>
+<img src="docs/screenshots/upload-history.png" alt="Upload History" width="380" />
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+<b>AI Insights</b><br/>
+<img src="docs/screenshots/ai-insights.png" alt="AI Insights" width="500" />
+</td>
+</tr>
+</table>
 
 ---
 
