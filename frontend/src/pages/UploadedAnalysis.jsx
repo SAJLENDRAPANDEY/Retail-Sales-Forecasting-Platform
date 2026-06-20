@@ -17,6 +17,7 @@ const styles = `
   .ua-page {
     width: 100%;
     font-family: 'Inter', sans-serif;
+    position: relative;
   }
 
   /* ── Page header ── */
@@ -318,7 +319,6 @@ const styles = `
     padding: 20px;
     border-radius: inherit;
   }
-  .ua-page { position: relative; }
   .modal-box {
     background: #FDFAF5;
     border: 1px solid #E2DBCF;
@@ -399,11 +399,11 @@ function KpiCard({ label, value }) {
    Main component
 ───────────────────────────────────────────── */
 function UploadedAnalysis() {
-  const [data, setData]             = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [aiInsights, setAiInsights] = useState("");
+  const [data, setData]                       = useState(null);
+  const [showConfirm, setShowConfirm]         = useState(false);
+  const [aiInsights, setAiInsights]           = useState("");
   const [insightsLoading, setInsightsLoading] = useState(false);
-  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfLoading, setPdfLoading]           = useState(false);
 
   /* Load analysis from localStorage on mount */
   useEffect(() => {
@@ -417,7 +417,10 @@ function UploadedAnalysis() {
     }
   }, []);
 
-  /* ── Download PDF ── */
+  /* ── Download PDF ──
+     Always reads the LATEST data from localStorage so that
+     ai_insights (saved after generation) are included in the PDF.
+  ── */
   const downloadPDF = async () => {
     if (!data) {
       alert("No analysis data found");
@@ -425,10 +428,15 @@ function UploadedAnalysis() {
     }
     setPdfLoading(true);
     try {
+      // Use latest localStorage data so ai_insights are included
+      const latestData = JSON.parse(
+        localStorage.getItem("uploadedAnalysis")
+      );
+
       const response = await fetch(`${API_URL}/download-upload-report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(latestData),
       });
 
       if (!response.ok) {
@@ -454,7 +462,10 @@ function UploadedAnalysis() {
     }
   };
 
-  /* ── Generate AI insights ── */
+  /* ── Generate AI insights ──
+     After getting insights, merges them into the stored analysis
+     so the PDF download can include them.
+  ── */
   const generateInsights = async () => {
     if (!data) return;
     setInsightsLoading(true);
@@ -469,7 +480,23 @@ function UploadedAnalysis() {
       if (!response.ok) throw new Error("Failed to generate insights");
 
       const result = await response.json();
+
+      // 1. Update the UI
       setAiInsights(result.insights || "No insights returned.");
+
+      // 2. Persist insights into localStorage so PDF includes them
+      const updatedAnalysis = {
+        ...data,
+        ai_insights: result.insights,
+      };
+      localStorage.setItem(
+        "uploadedAnalysis",
+        JSON.stringify(updatedAnalysis)
+      );
+
+      // 3. Sync local state so subsequent renders are consistent
+      setData(updatedAnalysis);
+
     } catch (error) {
       console.error("AI Insights Error:", error);
       alert("Unable to generate AI insights");
@@ -536,7 +563,8 @@ function UploadedAnalysis() {
             <div className="empty-icon">📊</div>
             <h2 className="empty-title">No analysis found.</h2>
             <p className="empty-sub">
-              Upload an Excel dataset first. Once analyzed, your full report will appear here.
+              Upload an Excel dataset first. Once analyzed, your full report
+              will appear here.
             </p>
             <a href="/upload" className="empty-cta">↑&nbsp;Upload a dataset</a>
           </div>
