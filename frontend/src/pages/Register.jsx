@@ -392,7 +392,7 @@ function Register() {
         <div className="register-left">
           <div className="brand-mark">
             <div className="brand-dot" />
-            <span className="brand-name">YourBrand</span>
+            <span className="brand-name">Retail-Sales-Forecasting-Platform</span>
           </div>
 
           <div className="left-content">
