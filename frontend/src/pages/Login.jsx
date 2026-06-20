@@ -344,7 +344,7 @@ function Login() {
         <div className="login-left">
           <div className="brand-mark">
             <div className="brand-dot" />
-            <span className="brand-name">YourBrand</span>
+            <span className="brand-name">Retail-Sales-Forecasting-Platform</span>
           </div>
 
           <div className="left-content">
@@ -356,7 +356,7 @@ function Login() {
             </p>
           </div>
 
-          <p className="left-footer">© 2025 YourBrand. All rights reserved.</p>
+          <p className="left-footer">© 2026 Retail-Sales-Forecasting-Platform. All rights reserved.</p>
         </div>
 
         {/* Right Form Panel */}
